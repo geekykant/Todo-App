@@ -18,26 +18,29 @@ import java.util.*
 
 class NotesActivity : AppCompatActivity(), NotesListener {
 
-    private lateinit var fab: FloatingActionButton
-    private val all_notes_list: MutableList<Note> = ArrayList()
-    private var adapter: NotesAdapter? = null
+    private lateinit var fabAddNote: FloatingActionButton
+    private var allNotesList = ArrayList<Note>()
+    private lateinit var adapter: NotesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notes_layout)
+
         val fullName = intent.getStringExtra(AppConstants.FULL_NAME)
-        supportActionBar!!.title = fullName
+        supportActionBar?.title = fullName
+
         init()
     }
 
     private fun init() {
-        fab = findViewById(R.id.fabAddNote)
-        fab.setOnClickListener { setupDialogBox() }
+        fabAddNote = findViewById(R.id.fabAddNote)
+        fabAddNote.setOnClickListener { setupDialogBox() }
+
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = NotesAdapter(all_notes_list)
-        adapter!!.setNotesListener(this)
+
+        adapter = NotesAdapter(allNotesList, this)
         recyclerView.adapter = adapter
     }
 
@@ -45,15 +48,16 @@ class NotesActivity : AppCompatActivity(), NotesListener {
         val view = LayoutInflater.from(this).inflate(R.layout.add_note_dialog, null)
         val title = view.findViewById<EditText>(R.id.title)
         val desc = view.findViewById<EditText>(R.id.description)
-        val add_note_btn = view.findViewById<Button>(R.id.add_submit)
+        val addNoteBtn = view.findViewById<Button>(R.id.add_submit)
         val alertDialog = AlertDialog.Builder(this)
                 .setView(view)
                 .create()
         alertDialog.show()
-        add_note_btn.setOnClickListener {
+
+        addNoteBtn.setOnClickListener {
             val note = Note(title.text.toString(), desc.text.toString())
-            all_notes_list.add(note)
-            adapter!!.notifyDataSetChanged()
+            allNotesList.add(note)
+            adapter.notifyDataSetChanged()
             alertDialog.dismiss()
         }
     }
