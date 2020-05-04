@@ -52,6 +52,7 @@ class NotesActivity : AppCompatActivity() {
             }
 
             override fun onTaskCompleted(note: Note) {
+                notesDb.notesDao().updateNotes(note)
             }
 
         }
@@ -82,7 +83,10 @@ class NotesActivity : AppCompatActivity() {
             val note = Note(title = title.text.toString(), description = desc.text.toString())
             notesDb.notesDao().insert(note)
 
-            adapter.notifyDataSetChanged()
+            allNotesList.clear()
+            allNotesList.addAll(notesDb.notesDao().getAllNotes())
+            adapter.notifyItemInserted(allNotesList.size)
+
             alertDialog.dismiss()
         }
     }

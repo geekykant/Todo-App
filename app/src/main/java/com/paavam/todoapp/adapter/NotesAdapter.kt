@@ -34,10 +34,14 @@ public class NotesAdapter(private val allNotesList: List<Note>, private val list
 
         holder.title.text = note.title
         holder.desc.text = note.description
+        holder.completedCheckbox.isChecked = note.isTaskCompleted
 
         holder.itemView.setOnClickListener { listener.onClickedItem(note) }
 
-        holder.completedCheckbox.setOnCheckedChangeListener { _, b -> listener.onTaskCompleted(note) }
+        holder.completedCheckbox.setOnCheckedChangeListener { _, b ->
+            note.isTaskCompleted = b
+            listener.onTaskCompleted(note)
+        }
     }
 
 }
