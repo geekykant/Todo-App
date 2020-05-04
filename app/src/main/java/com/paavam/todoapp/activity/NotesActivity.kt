@@ -4,16 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.paavam.todoapp.AppConstants
 import com.paavam.todoapp.R
 import com.paavam.todoapp.adapter.NotesAdapter
+import com.paavam.todoapp.db.Note
 import com.paavam.todoapp.interfaces.NotesListener
-import com.paavam.todoapp.model.Note
+import com.paavam.todoapp.util.SharedPrefUtils
 import java.util.*
 
 class NotesActivity : AppCompatActivity(), NotesListener {
@@ -26,7 +27,7 @@ class NotesActivity : AppCompatActivity(), NotesListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notes_layout)
 
-        val fullName = intent.getStringExtra(AppConstants.FULL_NAME)
+        val fullName = SharedPrefUtils.getString(this, AppConstants.FULL_NAME)
         supportActionBar?.title = fullName
 
         init()
@@ -49,18 +50,20 @@ class NotesActivity : AppCompatActivity(), NotesListener {
         val title = view.findViewById<EditText>(R.id.title)
         val desc = view.findViewById<EditText>(R.id.description)
         val addNoteBtn = view.findViewById<Button>(R.id.add_submit)
-        val alertDialog = AlertDialog.Builder(this)
+        val alertDialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
                 .setView(view)
                 .create()
         alertDialog.show()
 
         addNoteBtn.setOnClickListener {
-            val note = Note(title.text.toString(), desc.text.toString())
-            allNotesList.add(note)
+//            val note = Note(title.text.toString(), desc.text.toString())
+//            allNotesList.add(note)
             adapter.notifyDataSetChanged()
             alertDialog.dismiss()
         }
     }
 
-    override fun onClickedItem(note: Note) {}
+    override fun onClickedItem(note: Note) {
+    }
+
 }

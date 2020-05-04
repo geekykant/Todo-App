@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import com.paavam.todoapp.AppConstants
 import com.paavam.todoapp.R
+import com.paavam.todoapp.util.SharedPrefUtils
 
 lateinit var fullnameLayout: TextInputLayout
 lateinit var usernameLayout: TextInputLayout
@@ -39,10 +40,12 @@ public class LoginActivity : AppCompatActivity() {
 
         submit.setOnClickListener {
             if (checkValidation()) {
-                intent = Intent(applicationContext, NotesActivity::class.java)
-                intent.putExtra(AppConstants.FULL_NAME, fullnameEdt.text.toString())
-                intent.putExtra(AppConstants.USER_NAME, usernameEdt.text.toString())
-                startActivity(intent)
+                SharedPrefUtils.addBoolean(this, AppConstants.IS_LOGGED_IN, true)
+                SharedPrefUtils.addString(this, AppConstants.FULL_NAME, fullnameEdt.text.toString())
+                SharedPrefUtils.addString(this, AppConstants.USER_NAME, usernameEdt.text.toString())
+
+                startActivity(Intent(applicationContext, NotesActivity::class.java))
+                finish()
             }
         }
     }

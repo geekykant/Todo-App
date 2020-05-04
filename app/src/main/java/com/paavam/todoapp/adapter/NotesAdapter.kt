@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.paavam.todoapp.R
+import com.paavam.todoapp.db.Note
 import com.paavam.todoapp.interfaces.NotesListener
-import com.paavam.todoapp.model.Note
 
-public class NotesAdapter(private val allNotesList: List<Note>, val listener: NotesListener) : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
+public class NotesAdapter(private val allNotesList: List<Note>, private val listener: NotesListener) : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title = itemView.findViewById<TextView>(R.id.title_item)

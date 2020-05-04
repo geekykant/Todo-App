@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.paavam.todoapp.AppConstants
 import com.paavam.todoapp.R
-import com.paavam.todoapp.SharedPrefUtils
+import com.paavam.todoapp.util.SharedPrefUtils
 
 class SplashActivity : AppCompatActivity() {
 
