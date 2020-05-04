@@ -3,6 +3,7 @@ package com.paavam.todoapp.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.paavam.todoapp.R
@@ -12,8 +13,10 @@ import com.paavam.todoapp.interfaces.NotesListener
 public class NotesAdapter(private val allNotesList: List<Note>, private val listener: NotesListener) : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val title = itemView.findViewById<TextView>(R.id.title_item)
-        val desc = itemView.findViewById<TextView>(R.id.desc_item)
+        val title: TextView = itemView.findViewById(R.id.title_item)
+        val desc: TextView = itemView.findViewById(R.id.desc_item)
+
+        val completedCheckbox: CheckBox = itemView.findViewById(R.id.taskStatusComplete)
     }
 
 
@@ -33,6 +36,8 @@ public class NotesAdapter(private val allNotesList: List<Note>, private val list
         holder.desc.text = note.description
 
         holder.itemView.setOnClickListener { listener.onClickedItem(note) }
+
+        holder.completedCheckbox.setOnCheckedChangeListener { _, b -> listener.onTaskCompleted(note) }
     }
 
 }
