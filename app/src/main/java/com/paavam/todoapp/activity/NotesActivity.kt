@@ -14,15 +14,18 @@ import com.paavam.todoapp.db.Note
 import com.paavam.todoapp.db.NoteDatabase
 import com.paavam.todoapp.interfaces.NotesListener
 import com.paavam.todoapp.util.SharedPrefUtils
+import kotlinx.android.synthetic.main.notes_layout.*
 import java.util.*
 
 class NotesActivity : AppCompatActivity() {
 
     private lateinit var fabAddNote: FloatingActionButton
     private var allNotesList = ArrayList<Note>()
-    private lateinit var adapter: NotesAdapter
-
     private lateinit var notesDb: NoteDatabase
+
+    companion object {
+        private const val ADD_NOTE_CODE = 140
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +41,8 @@ class NotesActivity : AppCompatActivity() {
     private fun init() {
         fabAddNote = findViewById(R.id.fabAddNote)
         fabAddNote.setOnClickListener {
-            startActivity(Intent(applicationContext, AddNoteActivity::class.java))
-//            setupDialogBox()
+            intent = Intent(applicationContext, AddNoteActivity::class.java)
+            startActivityForResult(intent, ADD_NOTE_CODE)
         }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
@@ -57,8 +60,7 @@ class NotesActivity : AppCompatActivity() {
 
         }
 
-        adapter = NotesAdapter(allNotesList, listener)
-        recyclerView.adapter = adapter
+        recyclerView.adapter = NotesAdapter(allNotesList, listener)
     }
 
     private fun setupDb() {
@@ -68,27 +70,12 @@ class NotesActivity : AppCompatActivity() {
         allNotesList = notesDb.notesDao().getAllNotes() as ArrayList<Note>
     }
 
-    private fun setupDialogBox() {
-//        val view = LayoutInflater.from(this).inflate(R.layout.add_note_dialog, null)
-//        val title = view.findViewById<EditText>(R.id.title)
-//        val desc = view.findViewById<EditText>(R.id.description)
-//        val addNoteBtn = view.findViewById<Button>(R.id.add_submit)
-//
-//        val alertDialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-//                .setView(view)
-//                .create()
-//        alertDialog.show()
-//
-//        addNoteBtn.setOnClickListener {
-//            val note = Note(title = title.text.toString(), description = desc.text.toString())
-//            notesDb.notesDao().insert(note)
-//
-//            allNotesList.clear()
-//            allNotesList.addAll(notesDb.notesDao().getAllNotes())
-//            adapter.notifyItemInserted(allNotesList.size)
-//
-//            alertDialog.dismiss()
-//        }
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ADD_NOTE_CODE) {
+            allNotesList.clear()
+            allNotesList.addAll(notesDb.notesDao().getAllNotes())
+            recyclerView.adapter?.notifyItemInserted(allNotesList.size)
+        }
     }
 }

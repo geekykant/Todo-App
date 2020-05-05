@@ -4,15 +4,25 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.paavam.todoapp.BuildConfig
+import com.paavam.todoapp.NotesApp
 import com.paavam.todoapp.R
+import com.paavam.todoapp.db.Note
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AddNoteActivity : AppCompatActivity() {
 
@@ -44,6 +54,10 @@ class AddNoteActivity : AppCompatActivity() {
         addNoteImage.setOnClickListener {
             pickImageDialog()
         }
+
+        findViewById<Button>(R.id.add_note_submit).setOnClickListener {
+            addToDb()
+        }
     }
 
     private fun checkAndRequestPermission(): Boolean {
@@ -67,7 +81,6 @@ class AddNoteActivity : AppCompatActivity() {
 
             return false;
         }
-
         return true;
     }
 
@@ -88,15 +101,32 @@ class AddNoteActivity : AppCompatActivity() {
     private fun pickFromOptions(i: Int) {
         when (i) {
             1 -> {
-                intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(intent, REQUEST_GALLERY_IMAGE)
+                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(galleryIntent, REQUEST_GALLERY_IMAGE)
             }
 
             0 -> {
-                intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(intent, REQUEST_GALLERY_IMAGE)
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                var photoFile: File? = null
+                photoFile = createImage()
+
+                if (photoFile != null) {
+                    val photoURI = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", photoFile)
+                    picturePath = photoFile.absolutePath
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(cameraIntent, REQUEST_CAMERA_IMAGE)
+                }
             }
+
         }
+    }
+
+    private fun createImage(): File? {
+        val timestamp = SimpleDateFormat("yyyymmddHHmmss", Locale.ENGLISH).format(Date())
+        val fileName = "JPEG_" + timestamp + "_"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        return File.createTempFile(fileName, ".jpg", storageDir)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -116,10 +146,21 @@ class AddNoteActivity : AppCompatActivity() {
 
                     Glide.with(this).load(picturePath).into(addNoteImage)
                 }
+
+                REQUEST_CAMERA_IMAGE -> {
+                    Glide.with(this).load(picturePath).into(addNoteImage)
+                }
             }
         }
-
     }
 
+    fun addToDb() {
+        val app = applicationContext as NotesApp
+        val notesDao = app.getNotesDb().notesDao()
+
+        val note = Note(title = title.text.toString(), description = description.text.toString(), imagePath = picturePath)
+        notesDao.insert(note)
+        finish()
+    }
 
 }
