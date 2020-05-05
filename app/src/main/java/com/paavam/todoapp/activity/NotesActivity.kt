@@ -1,13 +1,10 @@
 package com.paavam.todoapp.activity
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.paavam.todoapp.AppConstants
 import com.paavam.todoapp.NotesApp
@@ -40,7 +37,10 @@ class NotesActivity : AppCompatActivity() {
 
     private fun init() {
         fabAddNote = findViewById(R.id.fabAddNote)
-        fabAddNote.setOnClickListener { setupDialogBox() }
+        fabAddNote.setOnClickListener {
+            startActivity(Intent(applicationContext, AddNoteActivity::class.java))
+//            setupDialogBox()
+        }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
@@ -69,26 +69,26 @@ class NotesActivity : AppCompatActivity() {
     }
 
     private fun setupDialogBox() {
-        val view = LayoutInflater.from(this).inflate(R.layout.add_note_dialog, null)
-        val title = view.findViewById<EditText>(R.id.title)
-        val desc = view.findViewById<EditText>(R.id.description)
-        val addNoteBtn = view.findViewById<Button>(R.id.add_submit)
+//        val view = LayoutInflater.from(this).inflate(R.layout.add_note_dialog, null)
+//        val title = view.findViewById<EditText>(R.id.title)
+//        val desc = view.findViewById<EditText>(R.id.description)
+//        val addNoteBtn = view.findViewById<Button>(R.id.add_submit)
+//
+//        val alertDialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
+//                .setView(view)
+//                .create()
+//        alertDialog.show()
+//
+//        addNoteBtn.setOnClickListener {
+//            val note = Note(title = title.text.toString(), description = desc.text.toString())
+//            notesDb.notesDao().insert(note)
+//
+//            allNotesList.clear()
+//            allNotesList.addAll(notesDb.notesDao().getAllNotes())
+//            adapter.notifyItemInserted(allNotesList.size)
+//
+//            alertDialog.dismiss()
+//        }
 
-        val alertDialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_App_MaterialAlertDialog)
-                .setView(view)
-                .create()
-        alertDialog.show()
-
-        addNoteBtn.setOnClickListener {
-            val note = Note(title = title.text.toString(), description = desc.text.toString())
-            notesDb.notesDao().insert(note)
-
-            allNotesList.clear()
-            allNotesList.addAll(notesDb.notesDao().getAllNotes())
-            adapter.notifyItemInserted(allNotesList.size)
-
-            alertDialog.dismiss()
-        }
     }
-
 }
