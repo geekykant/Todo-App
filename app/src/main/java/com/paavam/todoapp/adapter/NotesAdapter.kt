@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.paavam.todoapp.R
 import com.paavam.todoapp.db.Note
 import com.paavam.todoapp.interfaces.NotesListener
@@ -15,6 +17,7 @@ public class NotesAdapter(private val allNotesList: List<Note>, private val list
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.title_item)
         val desc: TextView = itemView.findViewById(R.id.desc_item)
+        val image: ImageView = itemView.findViewById(R.id.image_item)
 
         val completedCheckbox: CheckBox = itemView.findViewById(R.id.taskStatusComplete)
     }
@@ -35,6 +38,8 @@ public class NotesAdapter(private val allNotesList: List<Note>, private val list
         holder.title.text = note.title
         holder.desc.text = note.description
         holder.completedCheckbox.isChecked = note.isTaskCompleted
+
+        Glide.with(holder.itemView.context).load(note.imagePath).into(holder.image)
 
         holder.itemView.setOnClickListener { listener.onClickedItem(note) }
 

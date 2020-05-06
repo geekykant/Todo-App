@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Constraints
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.paavam.todoapp.AppConstants
 import com.paavam.todoapp.NotesApp
@@ -14,8 +17,10 @@ import com.paavam.todoapp.db.Note
 import com.paavam.todoapp.db.NoteDatabase
 import com.paavam.todoapp.interfaces.NotesListener
 import com.paavam.todoapp.util.SharedPrefUtils
+import com.paavam.todoapp.workmanager.MyWorker
 import kotlinx.android.synthetic.main.notes_layout.*
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class NotesActivity : AppCompatActivity() {
 
@@ -27,6 +32,17 @@ class NotesActivity : AppCompatActivity() {
         private const val ADD_NOTE_CODE = 140
     }
 
+    private fun setupWorkManager() {
+        val constraint = Constraints.Builder()
+                .build()
+
+        val request = PeriodicWorkRequest
+                .Builder(MyWorker::class.java, 15, TimeUnit.MINUTES)
+                .setConstraints(constraint)
+                .build()
+        WorkManager.getInstance(this).enqueue(request)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notes_layout)
@@ -36,6 +52,7 @@ class NotesActivity : AppCompatActivity() {
 
         setupDb()
         init()
+        setupWorkManager()
     }
 
     private fun init() {
@@ -51,7 +68,7 @@ class NotesActivity : AppCompatActivity() {
 
         val listener = object : NotesListener {
             override fun onClickedItem(note: Note) {
-
+                //Nothing here
             }
 
             override fun onTaskCompleted(note: Note) {
