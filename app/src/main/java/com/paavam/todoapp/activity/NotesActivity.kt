@@ -2,6 +2,8 @@ package com.paavam.todoapp.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -94,5 +96,18 @@ class NotesActivity : AppCompatActivity() {
             allNotesList.addAll(notesDb.notesDao().getAllNotes())
             recyclerView.adapter?.notifyItemInserted(allNotesList.size)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.blog_item){
+            startActivity(Intent(applicationContext, BlogActivity::class.java))
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.blogs_menu, menu)
+        return true
     }
 }
