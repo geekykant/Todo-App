@@ -8,6 +8,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import com.paavam.todoapp.AppConstants
 import com.paavam.todoapp.R
+import com.paavam.todoapp.onboarding.OnBoardingActivity
 import com.paavam.todoapp.util.SharedPrefUtils
 
 class SplashActivity : AppCompatActivity() {
@@ -37,6 +38,14 @@ class SplashActivity : AppCompatActivity() {
 
     private fun checkLoginStatus() {
         val isLoggedIn = SharedPrefUtils.getBoolean(this, AppConstants.IS_LOGGED_IN) as Boolean
+        val isBoardingCompleted = SharedPrefUtils.getBoolean(this, AppConstants.ON_BOARDED_COMPLETED) as Boolean
+
+        if(!isBoardingCompleted){
+            startActivity(Intent(applicationContext, OnBoardingActivity::class.java))
+            finish()
+            return
+        }
+
         if (isLoggedIn)
             startActivity(Intent(applicationContext, NotesActivity::class.java))
         else
